@@ -5,12 +5,9 @@ fn day03a(infile: &str) -> usize {
         .filter(|(_, s)| s.split_once(")") != None)
         .map(|(s1, s2)| (s1, s2.split(")").next().unwrap()))
         .map(|(s1, s2)| (s1.parse::<usize>(), s2.parse::<usize>()))
-        .filter_map(|(s1, s2)| {
-            if s1.is_ok() && s2.is_ok() {
-                Some((s1.unwrap(), s2.unwrap()))
-            } else {
-                None
-            }
+        .filter_map(|(s1, s2)| match (s1, s2) {
+            (Ok(s1), Ok(s2)) => Some((s1, s2)),
+            _ => None,
         })
         .filter(|&(s1, s2)| s1 > 0 && s1 <= 999 && s2 > 0 && s2 <= 999)
         .map(|(a, b)| a * b)
@@ -21,28 +18,11 @@ fn day03a(infile: &str) -> usize {
 
 fn day03b(infile: &str) -> usize {
     let infile = "do()".to_owned() + infile;
-    let input = infile
+    let pruned = infile
         .split("don't()")
-        .map(|s| s.split("do()").skip(1).collect::<Vec<_>>().join(""))
-        .collect::<String>();
-    let ret = input
-        .split_terminator("mul(")
-        .filter_map(|s| s.split_once(","))
-        .filter(|(_, s)| s.split_once(")") != None)
-        .map(|(s1, s2)| (s1, s2.split(")").next().unwrap()))
-        .map(|(s1, s2)| (s1.parse::<usize>(), s2.parse::<usize>()))
-        .filter_map(|(s1, s2)| {
-            if s1.is_ok() && s2.is_ok() {
-                Some((s1.unwrap(), s2.unwrap()))
-            } else {
-                None
-            }
-        })
-        .filter(|&(s1, s2)| s1 > 0 && s1 <= 999 && s2 > 0 && s2 <= 999)
-        .map(|(a, b)| a * b)
-        .sum::<usize>();
-    println!("{}", ret);
-    ret
+        .flat_map(|s| s.split("do()").skip(1).collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    day03a(pruned.join("").as_str())
 }
 
 fn main() {
