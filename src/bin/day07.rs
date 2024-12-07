@@ -17,20 +17,14 @@ fn combinations(values: &[usize], part_b: bool) -> Vec<usize> {
     if values.len() == 1 {
         vec![first]
     } else {
-        combinations(&values[1..], part_b)
-            .into_iter()
-            .flat_map(|v| {
-                if part_b {
-                    vec![
-                        first + v,
-                        first * v,
-                        concat(v, first)
-                    ]
-                } else {
-                    vec![first + v, first * v]
-                }
-            })
-            .collect::<Vec<_>>()
+        combinations(&values[1..], part_b).into_iter().fold(Vec::new(), |mut ret, v| {
+            ret.push(first + v);
+            ret.push(first * v);
+            if part_b {
+                ret.push(concat(v, first));
+            };
+            ret
+        })
     }
 }
 
