@@ -17,8 +17,7 @@ fn day07a(infile: &str) -> usize {
         .map(|(t, vals)| {
             (
                 t.parse::<usize>().unwrap(),
-                vals
-                    .split_whitespace()
+                vals.split_whitespace()
                     .rev()
                     .map(|v| v.parse::<usize>().unwrap())
                     .collect::<Vec<_>>(),
@@ -28,9 +27,7 @@ fn day07a(infile: &str) -> usize {
 
     let ret = input
         .into_iter()
-        .map(|(t, v)| (t, combinations(&v)))
-        .filter(|(t, v)| v.contains(t))
-        .map(|(t, _)| t)
+        .filter_map(|(t, v)| combinations(&v).contains(&t).then_some(t))
         .sum();
 
     ret
@@ -61,8 +58,7 @@ fn day07b(infile: &str) -> usize {
         .map(|(t, vals)| {
             (
                 t.parse::<usize>().unwrap(),
-                vals
-                    .split_whitespace()
+                vals.split_whitespace()
                     .rev()
                     .map(|v| v.parse::<usize>().unwrap())
                     .collect::<Vec<_>>(),
@@ -72,9 +68,7 @@ fn day07b(infile: &str) -> usize {
 
     let ret = input
         .into_iter()
-        .map(|(t, v)| (t, combinations2(&v)))
-        .filter(|(t, v)| v.contains(t))
-        .map(|(t, _)| t)
+        .filter_map(|(t, v)| combinations(&v).contains(&t).then_some(t))
         .sum();
 
     ret
