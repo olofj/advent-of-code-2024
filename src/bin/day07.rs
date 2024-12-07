@@ -1,58 +1,27 @@
-fn combinations(values: &[usize]) -> Vec<usize> {
+fn combinations(values: &[usize], part_b: bool) -> Vec<usize> {
+    let first = values[0];
     if values.len() == 1 {
-        vec![values[0]]
+        vec![first]
     } else {
-        let first = values[0];
-        let vals = combinations(&values[1..]);
-        vals.into_iter()
-            .flat_map(|v| vec![first * v, first + v])
-            .collect::<Vec<_>>()
-    }
-}
-
-fn day07a(infile: &str) -> usize {
-    let input = infile
-        .lines()
-        .map(|l| l.split_once(":").unwrap())
-        .map(|(t, vals)| {
-            (
-                t.parse::<usize>().unwrap(),
-                vals.split_whitespace()
-                    .rev()
-                    .map(|v| v.parse::<usize>().unwrap())
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .collect::<Vec<_>>();
-
-    let ret = input
-        .into_iter()
-        .filter_map(|(t, v)| combinations(&v).contains(&t).then_some(t))
-        .sum();
-
-    ret
-}
-
-fn combinations2(values: &[usize]) -> Vec<usize> {
-    if values.len() == 1 {
-        vec![values[0]]
-    } else {
-        let first = values[0];
-        let vals = combinations2(&values[1..]);
-        vals.into_iter()
+        combinations(&values[1..], part_b)
+            .into_iter()
             .flat_map(|v| {
-                vec![
-                    first * v,
-                    first + v,
-                    format!("{}{}", v, first).parse::<usize>().unwrap(),
-                ]
+                if part_b {
+                    vec![
+                        first + v,
+                        first * v,
+                        format!("{}{}", v, first).parse::<usize>().unwrap(),
+                    ]
+                } else {
+                    vec![first + v, first * v]
+                }
             })
             .collect::<Vec<_>>()
     }
 }
 
-fn day07b(infile: &str) -> usize {
-    let input = infile
+fn day07a(infile: &str) -> usize {
+    infile
         .lines()
         .map(|l| l.split_once(":").unwrap())
         .map(|(t, vals)| {
@@ -64,14 +33,25 @@ fn day07b(infile: &str) -> usize {
                     .collect::<Vec<_>>(),
             )
         })
-        .collect::<Vec<_>>();
+        .filter_map(|(t, v)| combinations(&v, false).contains(&t).then_some(t))
+        .sum()
+}
 
-    let ret = input
-        .into_iter()
-        .filter_map(|(t, v)| combinations(&v).contains(&t).then_some(t))
-        .sum();
-
-    ret
+fn day07b(infile: &str) -> usize {
+    infile
+        .lines()
+        .map(|l| l.split_once(":").unwrap())
+        .map(|(t, vals)| {
+            (
+                t.parse::<usize>().unwrap(),
+                vals.split_whitespace()
+                    .rev()
+                    .map(|v| v.parse::<usize>().unwrap())
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .filter_map(|(t, v)| combinations(&v, true).contains(&t).then_some(t))
+        .sum()
 }
 
 fn main() {
