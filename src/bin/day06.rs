@@ -29,6 +29,15 @@ fn visited(map: &Vec<Vec<char>>, pos: (usize, usize), moveidx: usize) -> HashSet
     ret
 }
 
+fn find_start(map: &Vec<Vec<char>>) -> (usize, usize) {
+    map.iter()
+        .enumerate()
+        .flat_map(|(i, l)| l.iter().enumerate().map(move |(j, c)| (i, j, c)))
+        .find(|(_, _, &c)| c != '#' && c != '.')
+        .map(|(i, j, _)| (i, j))
+        .unwrap()
+}
+
 fn day06a(infile: &str) -> usize {
     let map = infile
         .lines()
@@ -36,14 +45,7 @@ fn day06a(infile: &str) -> usize {
         .collect::<Vec<_>>();
     let moveidx = 0;
 
-    let pos = map
-        .iter()
-        .enumerate()
-        .flat_map(|(i, l)| l.iter().enumerate().map(move |(j, c)| (i, j, c)))
-        .find(|(_, _, &c)| c != '#' && c != '.')
-        .map(|(i,j,_)| (i,j))
-        .unwrap();
-
+    let pos = find_start(&map);
     let path = visited(&map, pos, moveidx);
 
     let ret = path.len();
@@ -95,14 +97,7 @@ fn day06b(infile: &str) -> usize {
         .map(|l| l.chars().collect::<Vec<_>>())
         .collect::<Vec<_>>();
 
-    let pos = map
-        .iter()
-        .enumerate()
-        .flat_map(|(i, l)| l.iter().enumerate().map(move |(j, c)| (i, j, c)))
-        .find(|(_, _, &c)| c != '#' && c != '.')
-        .map(|(i,j,_)| (i,j))
-        .unwrap();
-
+    let pos = find_start(&map);
     let moveidx = 0;
 
     // We need to know the default visited tiles, since it's the
