@@ -8,7 +8,7 @@ fn concat(a: usize, b: usize) -> usize {
     aa + b
 }
 
-// Permutate head <op> tail. Since we reverse the values when we 
+// Permutate head <op> tail. Since we reverse the values when we
 // initially created the vector of them, we can do it this way.
 // Brute-force, this is certainly slower than trying to be smart, but
 // with the input data it still runs in a few seconds.
@@ -17,14 +17,16 @@ fn combinations(values: &[usize], part_b: bool) -> Vec<usize> {
     if values.len() == 1 {
         vec![first]
     } else {
-        combinations(&values[1..], part_b).into_iter().fold(Vec::new(), |mut ret, v| {
-            ret.push(first + v);
-            ret.push(first * v);
-            if part_b {
-                ret.push(concat(v, first));
-            };
-            ret
-        })
+        combinations(&values[1..], part_b)
+            .into_iter()
+            .fold(Vec::new(), |mut ret, v| {
+                ret.push(first + v);
+                ret.push(first * v);
+                if part_b {
+                    ret.push(concat(v, first));
+                };
+                ret
+            })
     }
 }
 
