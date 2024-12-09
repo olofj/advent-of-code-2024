@@ -7,20 +7,16 @@ fn day09a(infile: &str) -> usize {
     let mut disk: Vec<Option<usize>> = Vec::with_capacity(input.iter().sum());
     let mut wp = 0;
     let mut fnum = 0;
-    let mut it = input.iter();
-    while let Some(flen) = it.next() {
-        for _ in wp..(wp + flen) {
-            disk.push(Some(fnum));
-        }
-        wp += flen;
+
+    input.chunks(2).for_each(|chunk| {
+        (0..chunk[0]).for_each(|_| disk.push(Some(fnum)));
         fnum += 1;
-        if let Some(space) = it.next() {
-            for _ in wp..(wp + space) {
-                disk.push(None);
-            }
-            wp += space;
+        wp += chunk[0];
+        if chunk.len() > 1 {
+            (0..chunk[1]).for_each(|_| disk.push(None));
+            wp += chunk[1];
         }
-    }
+    });
 
     let mut rp = disk.len() - 1;
     let mut wp = 0;
@@ -61,30 +57,28 @@ fn day09b(infile: &str) -> usize {
         .chars()
         .map(|c| c.to_string().parse::<usize>().unwrap())
         .collect::<Vec<_>>();
-    // Files: fileno, start, size
     let mut files: Vec<File> = Vec::new();
-    // Space: start, size
     let mut space: Vec<Space> = Vec::new();
 
     let mut wp = 0;
     let mut fnum = 0;
-    let mut iter = input.iter();
-    while let Some(flen) = iter.next() {
+    // Order is <file len><space len><file len>...
+    input.chunks(2).for_each(|chunk| {
         files.push(File {
             number: fnum,
             start: wp,
-            len: *flen,
+            len: chunk[0],
         });
         fnum += 1;
-        wp += flen;
-        if let Some(slen) = iter.next() {
+        wp += chunk[0];
+        if chunk.len() > 1 {
             space.push(Space {
                 start: wp,
-                len: *slen,
+                len: chunk[1],
             });
-            wp += slen;
+            wp += chunk[1];
         }
-    }
+    });
 
     // Defrag
     let mut rf = files.len() - 1;
