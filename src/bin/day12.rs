@@ -15,47 +15,45 @@ fn moves(point: (usize, usize), map: &Vec<Vec<char>>) -> Vec<(usize, usize)> {
 }
 
 fn day12a(infile: &str) -> usize {
-    let map = infile.lines().map(|l| l.chars().collect::<Vec<_>>()).collect::<Vec<_>>();
-    println!("map {:?}", map);
-    let mut visited: Vec<(usize, usize)> = Vec::new();
+    let map = infile
+        .lines()
+        .map(|l| l.chars().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let mut visited: HashSet<(usize, usize)> = HashSet::new();
     let mut ret = 0;
+
     for i in 0..map.len() {
         for j in 0..map[0].len() {
-            if ! visited.contains(&(i, j)) {
-                let plant = map[i][j];
-                let mut plot: HashSet<(usize, usize)> = HashSet::new();
-                let mut queue: Vec<(usize, usize)> = Vec::new();
-                let mut perimeter = 0;
-                queue.push((i,j));
-                while let Some(m) = queue.pop() {
-                    if visited.contains(&m) {
-                        continue;
-                    }
-                    visited.push(m);
-                    plot.insert(m);
-                    let check = moves(m, &map);
-                    let mut nogo = 4;
-                    nogo -= check.len();
-                    for mm in check {
-                        if map[mm.0][mm.1] == plant {
-                            if !visited.contains(&mm) {
-                                queue.push(mm);
-                            }
-                        } else {
-                            nogo += 1;
-                        }
-                    }
-                    perimeter += nogo;
+            let plant = map[i][j];
+            let mut plot: HashSet<(usize, usize)> = HashSet::new();
+            let mut queue: Vec<(usize, usize)> = Vec::new();
+            let mut perimeter = 0;
+            queue.push((i, j));
+            while let Some(m) = queue.pop() {
+                if visited.contains(&m) {
+                    continue;
                 }
-                ret += plot.len() * perimeter;
+                visited.insert(m);
+                plot.insert(m);
+
+                let check = moves(m, &map);
+                perimeter += 4-check.len();
+                for mm in check {
+                    if map[mm.0][mm.1] == plant {
+                        queue.push(mm);
+                    } else {
+                        perimeter += 1;
+                    }
+                }
             }
+            ret += plot.len() * perimeter;
         }
     }
 
     ret
 }
 
-fn day12b(infile: &str) -> usize {
+fn day12b(_infile: &str) -> usize {
     println!("(╯°□°)╯︵ ┻━┻");
     0
 }
