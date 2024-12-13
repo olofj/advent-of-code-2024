@@ -28,12 +28,7 @@ fn day11a(infile: &str) -> usize {
         .collect::<Vec<_>>();
 
     for _ in 0..25 {
-        stones = stones
-            .iter()
-            .flat_map(|v| {
-                expand(vec![*v])
-            })
-            .collect();
+        stones = stones.iter().flat_map(|v| expand(vec![*v])).collect();
     }
     stones.len()
 }
